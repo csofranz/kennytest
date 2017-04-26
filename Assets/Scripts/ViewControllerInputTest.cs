@@ -11,6 +11,11 @@ public class ViewControllerInputTest : MonoBehaviour {
 	public GameObject secondEffect;
 	public GameObject thirdEffect;
 
+	public GameObject glyphPart;
+	public float tracksPerSecond;
+	public float offSet; // length of wand
+	public float triggerDistance; // minimal distance to current point that will trigger generating a new point
+
 	// 1
 	private SteamVR_TrackedObject trackedObj;
 	// 2
@@ -24,6 +29,10 @@ public class ViewControllerInputTest : MonoBehaviour {
 	private GameObject secondInstance = null;
 	private GameObject thirdInstance = null;
 
+	private bool tracking = false;
+	//private GameObject glyphInstance = null;
+	//private Vector3 startPos;
+
 	void Awake()
 	{
 		trackedObj = GetComponent<SteamVR_TrackedObject>();
@@ -35,6 +44,30 @@ public class ViewControllerInputTest : MonoBehaviour {
 		if (Controller.GetHairTriggerUp())
 		{
 			//engulfInFlames ();§
+			// make the object diappear again
+			//Destroy(glyphInstance);
+			tracking = false; // will cause coroutine stop at next call
+		}
+
+		if (Controller.GetHairTriggerDown ()) {
+			if (!tracking) {
+				tracking = true;
+				startNewGlyph();
+				// now start the tracking coroutine
+				StartCoroutine("trackGlyph");
+//				startPos = trackedObj.transform.position;
+//				glyphInstance = Instantiate (glyphPart);
+			}
+
+
+		}
+
+		if (tracking) {
+			//Vector3 currentPos = trackedObj.transform.position;
+			//Vector3 middlePos = Vector3.Lerp (startPos, currentPos, 0.5f);
+			//glyphInstance.transform.position = middlePos;
+			//glyphInstance.transform.LookAt (currentPos);
+			//glyphInstance.transform.localScale = new Vector3 (glyphInstance.transform.localScale.x, glyphInstance.transform.localScale.y, Vector3.Distance (startPos, currentPos));
 		}
 
 		// call samplePadFor gesture to start, complete and execute gesture recognition
@@ -81,13 +114,76 @@ public class ViewControllerInputTest : MonoBehaviour {
 //		secondInstance.gameObject.AddComponent<RFX4_EffectSettingColor>().Color = Color.blue;
 	}
 
+
+	//
+	// gesture recognzer vol 2: the real zing
+	//
+	private List<Vector3> positions = null; // the sampled positions
+	private List<GameObject> parts = null; // the parts that make up the 
+
+	void startNewGlyph() {
+		if (positions == null) {
+			positions = new List<Vector3> ();
+		} else {
+			positions.Clear ();
+		}
+
+		if (parts == null) {
+			parts = new List<GameObject> ();
+		} else {
+			foreach (GameObject obj in parts) {
+				Destroy (obj);
+			}
+			parts.Clear ();
+		}
+	}
+
+	// add a segment between two pos
+	void addSegment(Vector3 startPos, Vector3 currentPos) {
+		GameObject glyphInstance = Instantiate (glyphPart);
+		Vector3 middlePos = Vector3.Lerp (startPos, currentPos, 0.5f);
+		glyphInstance.transform.position = middlePos;
+		glyphInstance.transform.LookAt (currentPos);
+		glyphInstance.transform.localScale = new Vector3 (glyphInstance.transform.localScale.x, glyphInstance.transform.localScale.y, Vector3.Distance (startPos, currentPos));
+		parts.Add (glyphInstance);
+	}
+
+
+	// tracking co-routine
+	IEnumerator trackGlyph () {
+		while (tracking) {
+			// get current point
+			Vector3 currentPoint = trackedObj.transform.position;
+			// we should now move it forward by offset. 
+			currentPoint = currentPoint + offSet * trackedObj.transform.forward;
+			int numPos = positions.Count;
+			if (numPos < 1) {
+				positions.Add (currentPoint);
+			} else { 
+				Vector3 lastPos = positions [numPos - 1];
+				if (Vector3.Distance (lastPos, currentPoint) > triggerDistance) {
+					// difference is large enough to warrant a new point
+					positions.Add (currentPoint);
+					addSegment (currentPoint, lastPos);
+				}
+				yield return new WaitForSeconds (1.0f / tracksPerSecond);
+			}
+		}
+
+		// if we get here, the co-routine expires
+		//return null;
+
+		// we can now start evaluating the glyph
+
+	}
+
 	//
 	// ================================
 	//
 
 	// stuff for getsture recognition
 	private bool recording = false;
-	private bool gestureComplete = false;
+//	private bool gestureComplete = false;
 	private string verticalBuffer = "";
 	private string horizontalBuffer = "";
 	private int lastUD = 0;
@@ -99,7 +195,7 @@ public class ViewControllerInputTest : MonoBehaviour {
 	{
 		// call this when you are ready to start with a gesture
 		recording = false;
-		gestureComplete = false;
+//		gestureComplete = false;
 		verticalBuffer = "";
 		horizontalBuffer = "";
 		lastUD = 0;
@@ -199,7 +295,7 @@ public class ViewControllerInputTest : MonoBehaviour {
 			if (!fingerDown) return; // nothing to do
 			// if we get here, we start a new glyph. lets init and then fall through to 
 			// standard processing
-			gestureComplete = false;
+			//gestureComplete = false;
 			verticalBuffer = "";
 			horizontalBuffer = "";
 			lastUD = 0;
@@ -214,7 +310,7 @@ public class ViewControllerInputTest : MonoBehaviour {
 		{
 			// gesture has ended. Can't happen on first pass because there we know fingerdown is true
 			recording = false;
-			gestureComplete = true;
+			//gestureComplete = true;
 			// we should probably now call a delegate
 			finishedGesture();
 			return;
