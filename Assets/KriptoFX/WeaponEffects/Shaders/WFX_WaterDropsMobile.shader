@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Effects/WeaponFX/WaterDropsMobile" {
 Properties {
         _TintColor ("Tint Color", Color) = (1,1,1,1)
@@ -62,7 +64,7 @@ float4 _CutOut_ST;
 v2f vert (appdata_full v)
 {
 	v2f o;
-	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.color = v.color;
 	
 	o.grab.xy = (float2(o.vertex.x, o.vertex.y * _ProjectionParams.x) + o.vertex.w) * 0.5;

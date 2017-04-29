@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Effects/WeaponFX/WaterDrops" {
 	Properties{
 			_TintColor("Tint Color", Color) = (1,1,1,1)
@@ -64,7 +66,7 @@ Shader "Effects/WeaponFX/WaterDrops" {
 	v2f vert(appdata_full v)
 	{
 		v2f o;
-		o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.vertex = UnityObjectToClipPos(v.vertex);
 		o.color = v.color;
 		#if UNITY_UV_STARTS_AT_TOP
 		float scale = -1.0;

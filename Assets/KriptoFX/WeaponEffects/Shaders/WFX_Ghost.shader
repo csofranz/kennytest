@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Effects/WeaponFX/Ghost" {
 	Properties{
 			_TintColor("Tint Color", Color) = (1,1,1,1)
@@ -73,9 +75,9 @@ Shader "Effects/WeaponFX/Ghost" {
 						o.uv_BumpMap = TRANSFORM_TEX(v.texcoord, _BumpMap) + _Time.xx * _Speed;
 						o.uv_MainTex = TRANSFORM_TEX(v.texcoord, _MainTex);
 
-						float4 oPos = mul(UNITY_MATRIX_MVP, v.vertex);
+						float4 oPos = UnityObjectToClipPos(v.vertex);
 
-						o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+						o.vertex = UnityObjectToClipPos(v.vertex);
 
 						#if UNITY_UV_STARTS_AT_TOP
 							float scale = -1.0;

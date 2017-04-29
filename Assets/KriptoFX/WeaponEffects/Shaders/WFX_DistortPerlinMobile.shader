@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "Effects/WeaponFX/DistortPerlinMobile" {
@@ -70,7 +72,7 @@ Shader "Effects/WeaponFX/DistortPerlinMobile" {
 						v2f o;
 
 						//////// Displacemnt by noise texture (rgb) and drop waves (a)
-						float4 oPos = mul(UNITY_MATRIX_MVP, v.vertex);
+						float4 oPos = UnityObjectToClipPos(v.vertex);
 						float3 wpos = mul(unity_ObjectToWorld, v.vertex).xyz;
 
 						float4 coordNoise = float4(wpos * _NoiseScale.xyz, 0);
@@ -80,7 +82,7 @@ Shader "Effects/WeaponFX/DistortPerlinMobile" {
 						v.vertex.xyz += v.normal * _DropWavesScale.y * 0.005;
 						v.vertex.xyz += v.normal*(_DropWavesScale.z * 0.005) + tex1.rgb * _NoiseScale.w - _NoiseScale.w / 2;
 
-						o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+						o.vertex = UnityObjectToClipPos(v.vertex);
 						//////////////////////////////////////////////////////////////
 
 						oPos += o.vertex;

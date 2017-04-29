@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Effects/WeaponFX/IceMobile" {
 	Properties{
 			_Color("Main Color", Color) = (1,1,1,1)
@@ -66,13 +68,13 @@ Shader "Effects/WeaponFX/IceMobile" {
 						o.uv_Height = TRANSFORM_TEX(v.texcoord, _Height);
 						o.uv_MainTex = TRANSFORM_TEX(v.texcoord, _MainTex);
 
-						float4 oPos = mul(UNITY_MATRIX_MVP, v.vertex);
+						float4 oPos = UnityObjectToClipPos(v.vertex);
 
 						float4 coord = float4(v.texcoord.xy, 0 ,0);
 						float4 tex = tex2Dlod(_HeightMap, coord);
 						v.vertex.xyz += v.normal * _Height * tex.r;
 
-						o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+						o.vertex = UnityObjectToClipPos(v.vertex);
 
 
 						o.color = v.color;

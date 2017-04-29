@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 // Upgrade NOTE: replaced '_Object2World' with '_Object2World'
@@ -64,7 +66,7 @@ Category {
 #if UNITY_VERSION >= 550
 				o.vertex = UnityObjectToClipPos(v.vertex);
 #else 
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 #if DISTORT_OFF
 				return o;

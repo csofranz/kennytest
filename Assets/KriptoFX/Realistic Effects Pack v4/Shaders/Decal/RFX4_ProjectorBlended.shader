@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Projector' with 'unity_Projector'
 // Upgrade NOTE: replaced '_ProjectorClip' with 'unity_ProjectorClip'
 
@@ -42,7 +44,7 @@ Shader "KriptoFX/RFX4/Decal/Blended" {
 #if UNITY_VERSION >= 550
 				o.vertex = UnityObjectToClipPos(vertex);
 #else 
-				o.vertex = mul(UNITY_MATRIX_MVP, vertex);
+				o.vertex = UnityObjectToClipPos(vertex);
 #endif
 				o.uvMainTex = mul (unity_Projector, vertex);
 				

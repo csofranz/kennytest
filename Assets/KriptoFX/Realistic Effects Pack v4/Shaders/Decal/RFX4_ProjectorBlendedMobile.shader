@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "KriptoFX/RFX4/Decal/BlendedMobile" {
 	Properties {
 	[HDR]_TintColor ("Tint Color", Color) = (0.5,0.5,0.5,1)
@@ -37,7 +39,7 @@ Shader "KriptoFX/RFX4/Decal/BlendedMobile" {
 #if UNITY_VERSION >= 550
 				o.vertex = UnityObjectToClipPos(v.vertex);
 #else 
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 				o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
 				return o;

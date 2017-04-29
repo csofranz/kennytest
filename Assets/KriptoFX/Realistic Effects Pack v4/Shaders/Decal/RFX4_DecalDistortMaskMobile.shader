@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "KriptoFX/RFX4/Decal/DistortMaskMobile" {
 Properties {
 	[HDR]_TintColor ("Tint Color", Color) = (0.5,0.5,0.5,0.5)
@@ -64,7 +66,7 @@ Category {
 #if UNITY_VERSION >= 550
 				o.vertex = UnityObjectToClipPos(v.vertex);
 #else 
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 #endif
 				o.color = v.color;
 				o.texcoord.xy = TRANSFORM_TEX(v.texcoord, _MainTex);

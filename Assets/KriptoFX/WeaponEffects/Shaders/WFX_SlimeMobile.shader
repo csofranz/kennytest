@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Effects/WeaponFX/SlimeMobile" {
 	Properties{
 			_TintColor("Main Color", Color) = (1,1,1,1)
@@ -66,7 +68,7 @@ Shader "Effects/WeaponFX/SlimeMobile" {
 						o.uv_BumpMap = TRANSFORM_TEX(v.texcoord, _BumpMap);
 						o.uv_CutOut = TRANSFORM_TEX(v.texcoord, _CutOut);
 
-						o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+						o.vertex = UnityObjectToClipPos(v.vertex);
 
 						o.grab.xy = (half2(o.vertex.x, o.vertex.y * _ProjectionParams.x) + o.vertex.w) * 0.5;
 						o.grab.zw = o.vertex.w;

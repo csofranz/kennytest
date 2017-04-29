@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 Shader "Effects/WeaponFX/WaterDropsSimple" {
 Properties {
         _Color ("Main Color", Color) = (1,1,1,1)
@@ -65,7 +67,7 @@ GrabPass {
 				#else
 					float scale = 1.0;
 				#endif
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.grab.xy = (float2(o.vertex.x, o.vertex.y*scale) + o.vertex.w) * 0.5;
 				o.grab.zw = o.vertex.w;
 #if UNITY_SINGLE_PASS_STEREO
@@ -142,7 +144,7 @@ GrabPass {
 				#else
 					float scale = 1.0;
 				#endif
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.vertex = UnityObjectToClipPos(v.vertex);
 				o.grab.xy = (float2(o.vertex.x, o.vertex.y*scale) + o.vertex.w) * 0.5;
 				o.grab.zw = o.vertex.w;
 #if UNITY_SINGLE_PASS_STEREO
